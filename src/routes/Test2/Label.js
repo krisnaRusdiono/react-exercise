@@ -6,7 +6,11 @@ const cssLabel = css({
   padding: '2px 8px',
   backgroundColor: '#e0e0e0',
   borderRadius: 8,
+  "&:hover button": {
+    display: 'inline-block'
+  },
   button: {
+    display: 'none',
     backgroundColor: 'transparent',
     color: 'red',
     marginLeft: 4,
@@ -17,11 +21,11 @@ const cssLabel = css({
   }
 })
 
-const Label = () => {
+const Label = ({value, setValue}) => {
   return (
     <span className={cssLabel}>
-      RENDER VALUE HERE
-      <button type="button">⊗</button>
+      {value || 'RENDER VALUE HERE'}
+      <button type="button" onClick={() => setValue('')}>⊗</button>
     </span>
   )
 }
