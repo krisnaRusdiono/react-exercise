@@ -1,8 +1,13 @@
+const Input = ({onSearch, applySearch}) => {
 
-const Input = () => {
+  const handleSubmit = (formEvent) => {
+    formEvent.preventDefault();
+    applySearch();
+  }
+
   return (
-    <form>
-      <input type="text" placeholder="search" />
+    <form onSubmit={handleSubmit}>
+      <input type="text" placeholder="search" onChange={changeEvent => onSearch(changeEvent.target.value)} />
       <button type="submit">🔍</button>
     </form>
   )
