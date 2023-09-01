@@ -1,10 +1,27 @@
 import { cssWrapper } from './style';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Comp2 from "./Comp2";
 
-const Comp1 = () => {
-  const [value] = useState(0);
+const Comp1 = ({baseNumber, onChangeBaseNumber}) => {
+  const [localNumber, setLocalNumber] = useState(baseNumber);
+  const [checkboxValue, setCheckboxValue] = useState(false);
+
+  const handleCheckboxChange = (changeEvent) => {
+    const { target } = changeEvent;
+    setCheckboxValue(target.checked);
+  }
+
+  const handleInputChange = (changeEvent) => {
+    const { target } = changeEvent || {};
+    setLocalNumber(Number(target.value))
+  }
+
+  useEffect(() => {
+    if (checkboxValue) {
+      setLocalNumber(baseNumber);
+    }
+  }, [baseNumber, checkboxValue])
 
   return(
     <div className={cssWrapper}>
@@ -12,11 +29,15 @@ const Comp1 = () => {
       <br/>
       <br/>
       <label htmlFor="overwrite">
-        Local overwrite: <input id="overwrite" type="checkbox" value={value}/>
+        Local overwrite: <input id="overwrite" type="checkbox" value={checkboxValue} onChange={handleCheckboxChange}/>
         {/* only show when overwrite is checked */}
-        <input id="mynumber1" type="text" placeholder="input mynumber1"/>
+        {
+          checkboxValue && (
+            <input id="mynumber1" type="number" placeholder="input mynumber1" value={localNumber} onChange={handleInputChange}/>
+          )
+        }
       </label>
-      <Comp2 />
+      <Comp2 displayNumber={checkboxValue ? localNumber : baseNumber } />
     </div>
   )
 }

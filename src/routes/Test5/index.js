@@ -3,6 +3,7 @@ import { cssWrapper } from './style';
 
 import Comp1 from "./Comp1";
 import Comp3 from "./Comp3";
+import { createContext, useEffect, useState } from 'react';
 
 const question = (
   <ul>
@@ -25,20 +26,54 @@ const question = (
   </ul>
 );
 
+export const contextFive = createContext();
+
 const Test5 = () => {
+  const [baseNumber, setBaseNumber] = useState(0);
+  const [isOdd, setIsOdd] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+
+  const handleButtonEvent = (isIncrement) => {
+    setBaseNumber(value => isIncrement ? Number(value) + 1 : Number(value) - 1);
+  }
+
+  const handleMyNumberChange = (changeEvent) => {
+    const { target } = changeEvent || {};
+    setBaseNumber(Number(target.value));
+  }
+
+  // useEffect can be replaced by using calculateOddEven and attach on every change events!
+  useEffect(() => {
+    setIsOdd(baseNumber % 2 === 0);
+  }, [baseNumber])
+
+  // eslint-disable-next-line no-unused-vars
+  const calculateOddEven = () => {
+    setIsOdd(baseNumber % 2 === 0);
+  }
+
+  const contextValue = {
+    baseNumber, 
+    setBaseNumber, 
+    showModal, 
+    setShowModal
+  }
+
   return(
     <div>
       {question}
-      <button id="numbermin" type="button">-</button>
-      <input id="mynumber" type="text" placeholder="input mynumber"/>
-      <button id="numberplus" type="button">+</button>
+      <button id="numbermin" type="button" onClick={() => handleButtonEvent(false)}>-</button>
+      <input id="mynumber" type="number" placeholder="input mynumber" value={baseNumber} onChange={handleMyNumberChange}/>
+      <button id="numberplus" type="button" onClick={() => handleButtonEvent(true)}>+</button>
       <br/>
       <br/>
       <div className={cssWrapper}>
-        The inputted value is [ODD / EVEN]*
+        The inputted value is [<strong>{isOdd ? 'ODD' : 'EVEN'}</strong>]* 
       </div>
-      <Comp1 />
-      <Comp3 />
+      <Comp1 baseNumber={baseNumber} onChangeBaseNumber={setBaseNumber} />
+      <contextFive.Provider value={contextValue}>
+        <Comp3 />
+      </contextFive.Provider>
     </div>
   )
 }
